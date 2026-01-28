@@ -1,0 +1,163 @@
+
+        :root {
+            --primary-color: #007BFF;
+            --secondary-color: #28a745;
+            --bg-login-gradient: linear-gradient(135deg, #f0f0f5, #e0e0f0);
+            --bg-main-color: #e0e0f0;
+            --text-color: #333;
+            --box-bg-color: #ffffff;
+            --border-color: #cccccc;
+            --font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Initial login background */
+        body.login-page {
+            background: var(--bg-login-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Main pages background */
+        body.main-page {
+            background-color: var(--bg-main-color);
+        }
+        
+        /* General page animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: var(--box-bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 40px;
+            background-color: var(--box-bg-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+        }
+
+        .header-center {
+            text-align: center;
+        }
+
+        .college-details h1 {
+            font-size: 1.8em;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .college-details p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Centered login form */
+        #login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        .login-form {
+            width: 350px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .round-section { display: none; }
+        .round-section.active { display: block; }
+        
+        /* Navigation Styles */
+        #nav-buttons {
+            display: none;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .nav-btn {
+            padding: 12px 25px;
+            font-size: 1em;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background-color: #f0f0f0;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .nav-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* General Styles for all rounds */
+        .CodeMirror { border: 1px solid var(--border-color); height: 400px; }
+        .submit-btn { 
+            display: block; 
+            width: 100%; 
+            padding: 15px; 
+            margin-top: 20px; 
+            font-size: 1.2em; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        #student-login-btn, #admin-login-btn { 
+            background-color: var(--primary-color); 
+        }
+        #student-login-btn:hover, #admin-login-btn:hover { background-color: #0056b3; }
+        #mcq-submit-btn { background-color: var(--primary-color); }
+        #mcq-submit-btn:hover { background-color: #0056b3; }
+        #scramble-submit-btn { background-color: var(--secondary-color); }
+        #scramble-submit-btn:hover { background-color: #218838; }
+        #debug-submit-btn { background-color: #17a2b8; }
+        #debug-submit-btn:hover { background-color: #138496; }
+        #frontend-submit-btn { background-color: #dc3545; }
+        #frontend-submit-btn:hover { background-color: #c82333; }
+        .result-message { margin-top: 20px; padding: 15px; border-radius: 5px; text-align: center; display: none; }
+        .mcq-timer { font-size: 1.2em; font-weight: bold; text-align: right; margin-bottom: 20px; }
+
+        /* Admin Dashboard Styles */
+        #scores-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        #scores-table th, #scores-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        #scores-table th { background-color: #f2f2f2; }

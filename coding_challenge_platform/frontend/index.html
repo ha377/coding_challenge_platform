@@ -1,0 +1,2378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNTUA Coding Challenge Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
+    <script src="config.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #007BFF;
+            --secondary-color: #28a745;
+            --bg-login-gradient: linear-gradient(135deg, #f0f0f5, #e0e0f0);
+            --bg-main-color: #e0e0f0;
+            --text-color: #333;
+            --box-bg-color: #ffffff;
+            --border-color: #cccccc;
+            --font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            transition: background-color 0.3s ease;
+        }
+
+        body.login-page {
+            background: var(--bg-login-gradient);
+            background-image: url('/static/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: scroll;
+        }
+        
+        body.main-page {
+            background-color: var(--bg-main-color);
+            background-image: url('/static/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: scroll;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
+            animation: slideDown 0.5s ease-out;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .home-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0056b3 100%);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .home-btn:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 123, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .header img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            object-fit: contain;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .header img:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+        
+        .header-center {
+            text-align: center;
+            flex: 1;
+            margin: 0 30px;
+        }
+
+        .college-details h1 {
+            font-size: 1.6em;
+            margin: 0;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+        
+        .college-details h2 {
+            font-size: 1.1em;
+            margin: 5px 0 0 0;
+            font-weight: 600;
+            color: var(--primary-color);
+            letter-spacing: 0.8px;
+        }
+
+        .college-details p {
+            margin: 3px 0;
+            font-size: 0.85em;
+            color: #b0b0b0;
+            letter-spacing: 0.5px;
+        }
+        
+        .college-details p:first-of-type {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .main-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--box-bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+            box-sizing: border-box;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 350px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+
+        .login-form input {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .round-section { 
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .round-section.active { 
+            display: block;
+        }
+        
+        #nav-buttons {
+            display: none;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            animation: slideDown 0.5s ease-out;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            padding: 12px 25px;
+            font-size: 1em;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background-color: #f0f0f0;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
+        .nav-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .CodeMirror { 
+            border: 1px solid var(--border-color); 
+            height: 400px;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.4s ease-out;
+        }
+        .submit-btn { 
+            display: block; 
+            width: 100%; 
+            padding: 15px; 
+            margin-top: 20px; 
+            font-size: 1.2em; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            color: white;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        #student-login-btn, #admin-login-btn { 
+            background-color: var(--primary-color); 
+        }
+        #student-login-btn:hover, #admin-login-btn:hover { 
+            background-color: #0056b3;
+        }
+        #mcq-submit-btn { 
+            background-color: var(--primary-color);
+        }
+        #mcq-submit-btn:hover { 
+            background-color: #0056b3;
+        }
+        #scramble-submit-btn, #scramble-next-btn, #scramble-finish-btn { 
+            background-color: var(--secondary-color);
+        }
+        #scramble-submit-btn:hover, #scramble-next-btn:hover, #scramble-finish-btn:hover { 
+            background-color: #218838;
+        }
+        #debug-submit-btn, #debug-next-btn, #debug-finish-btn { 
+            background-color: #17a2b8;
+        }
+        #debug-submit-btn:hover, #debug-next-btn:hover, #debug-finish-btn:hover { 
+            background-color: #138496;
+        }
+        #frontend-submit-btn { 
+            background-color: #dc3545;
+        }
+        #frontend-submit-btn:hover { 
+            background-color: #c82333;
+        }
+        #next-question-btn {
+            background-color: #007bff;
+            display: none;
+        }
+        #next-question-btn:hover {
+            background-color: #0056b3;
+        }
+        .result-message { 
+            margin-top: 20px; 
+            padding: 15px; 
+            border-radius: 5px; 
+            text-align: center; 
+            display: none;
+            animation: slideDown 0.4s ease-out;
+        }
+        .mcq-timer { font-size: 1.2em; font-weight: bold; text-align: right; margin-bottom: 20px; }
+        #admin-message { color: var(--text-color); }
+        
+        /* Admin Panel Styling */
+        .admin-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+        }
+        
+        .admin-sidebar {
+            width: 250px;
+            background: var(--box-bg-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+            animation: slideInLeft 0.5s ease-out;
+        }
+        
+        .admin-sidebar h3 {
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            font-size: 1.1em;
+        }
+        
+        .admin-menu-item {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background-color: #f0f0f0;
+            border: none;
+            border-left: 4px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            color: var(--text-color);
+        }
+        
+        .admin-menu-item:hover {
+            background-color: #e8f4f8;
+            border-left-color: var(--primary-color);
+            transform: translateX(5px);
+        }
+        
+        .admin-menu-item.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+        }
+        
+        .admin-content {
+            flex: 1;
+            background: var(--box-bg-color);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        .admin-content h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            animation: slideDown 0.4s ease-out;
+        }
+        
+        .admin-section {
+            margin-bottom: 25px;
+        }
+        
+        .admin-section-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 20px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #333;
+            font-size: 0.95em;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.95em;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+            transform: scale(1.01);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            animation: slideDown 0.5s ease-out 0.1s backwards;
+        }
+        
+        .button-group button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+        }
+        
+        .btn-success {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+        }
+        
+        #scores-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px;
+            animation: slideDown 0.5s ease-out;
+        }
+        #scores-table th, #scores-table td { 
+            border: 1px solid #e0e0e0;
+            padding: 12px; 
+            text-align: left; 
+        }
+        #scores-table th { 
+            background-color: var(--primary-color); 
+            color: white; 
+            font-weight: 600;
+        }
+        #scores-table tbody tr:nth-child(even) { 
+            background-color: #f9f9f9; 
+        }
+        #scores-table tbody tr:hover { 
+            background-color: #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+        
+        #admin-questions-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px;
+            animation: slideDown 0.5s ease-out;
+        }
+        #admin-questions-table th, #admin-questions-table td { 
+            border: 1px solid #e0e0e0;
+            padding: 10px; 
+            text-align: left; 
+            font-size: 0.9em;
+        }
+        #admin-questions-table th { 
+            background-color: var(--primary-color); 
+            color: white; 
+            font-weight: 600;
+        }
+        #admin-questions-table tbody tr:nth-child(even) { 
+            background-color: #f9f9f9; 
+        }
+        #admin-questions-table tbody tr:hover { 
+            background-color: #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+        
+        .file-list-container {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary-color);
+            animation: slideInLeft 0.4s ease-out;
+        }
+        
+        .file-list-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .file-list-container li {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background-color: white;
+            border-left: 3px solid var(--primary-color);
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+        
+        .file-list-container li:hover {
+            background-color: #f0f8ff;
+            transform: translateX(2px);
+        }
+        
+        .file-list-container a {
+            color: var(--primary-color);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .file-list-container a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        
+        .form-group small {
+            display: block;
+            margin-top: 4px;
+            font-size: 0.85em;
+        }
+        
+        .admin-panel-content {
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .admin-form label {
+            display: block;
+            margin-top: 10px;
+        }
+        .admin-form select, .admin-form input[type="file"] {
+            display: block;
+            margin-top: 5px;
+        }
+        .admin-form button {
+            margin-top: 15px;
+        }
+        body.main-page {
+    background-color: var(--bg-main-color);
+    background-image: url('/static/back.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+        
+        /* Footer Styling */
+        .footer {
+            width: 100%;
+            background: linear-gradient(135deg, #3a3a3a 0%, #4a4a4a 100%);
+            color: #b0b0b0;
+            padding: 15px 25px;
+            box-sizing: border-box;
+            border-top: 3px solid var(--primary-color);
+            margin-top: auto;
+            animation: slideDown 0.5s ease-out 0.2s both;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .footer-section h3 {
+            color: #ffffff;
+            margin: 0 0 6px 0;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+        }
+        
+        .footer-section p {
+            margin: 4px 0;
+            line-height: 1.4;
+            font-size: 0.8em;
+        }
+        
+        .footer-section a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .footer-section a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 12px;
+            padding-top: 10px;
+            text-align: center;
+            color: #888;
+            font-size: 0.75em;
+        }
+        
+        .footer-bottom p {
+            margin: 2px 0;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(0, 123, 255, 0.2);
+            border-radius: 50%;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 15px;
+                gap: 10px;
+            }
+            
+            .header img {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .header-center {
+                margin: 0 8px;
+                flex: 1;
+            }
+            
+            .college-details h1 {
+                font-size: 1.2em;
+            }
+            
+            .college-details h2 {
+                font-size: 0.9em;
+            }
+            
+            .college-details p {
+                font-size: 0.75em;
+            }
+            
+            .home-btn {
+                padding: 8px 12px;
+                font-size: 0.75em;
+            }
+            
+            .login-form {
+                width: 90%;
+                max-width: 300px;
+                padding: 20px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .main-container {
+                padding: 10px;
+            }
+            
+            .footer {
+                padding: 10px 15px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .footer-section h3 {
+                font-size: 0.8em;
+            }
+            
+            .footer-section p {
+                font-size: 0.75em;
+            }
+            
+            .footer-bottom {
+                margin-top: 10px;
+                padding-top: 8px;
+            }
+            
+            .footer-bottom p {
+                margin: 2px 0;
+                font-size: 0.7em;
+            }
+            
+            /* Admin Panel Tablet Styles (768px) */
+            .admin-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+                position: relative;
+                top: 0;
+                padding: 15px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .admin-sidebar h3 {
+                width: 100%;
+                font-size: 0.95em;
+                margin-bottom: 10px;
+            }
+            
+            .admin-menu-item {
+                flex: 1;
+                min-width: 120px;
+                font-size: 0.9em;
+                padding: 10px;
+            }
+            
+            .admin-content {
+                width: 100%;
+                padding: 20px;
+            }
+            
+            #scores-table,
+            #admin-questions-table {
+                font-size: 0.85em;
+            }
+            
+            #scores-table th, #scores-table td,
+            #admin-questions-table th, #admin-questions-table td {
+                padding: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 8px 8px;
+            }
+            
+            .header img {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .header-center {
+                margin: 0 5px;
+                flex: 1;
+            }
+            
+            .college-details h1 {
+                font-size: 1em;
+            }
+            
+            .college-details h2 {
+                font-size: 0.8em;
+                margin-top: 2px;
+            }
+            
+            .college-details p {
+                font-size: 0.65em;
+                margin: 2px 0;
+            }
+            
+            .home-btn {
+                padding: 6px 10px;
+                font-size: 0.65em;
+            }
+            
+            .login-form {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .nav-btn {
+                font-size: 0.85em;
+                padding: 10px 12px;
+            }
+            
+            .submit-btn {
+                font-size: 0.9em;
+                padding: 12px;
+            }
+            
+            /* Admin Panel Mobile Styles */
+            .admin-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+                position: relative;
+                top: 0;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .admin-sidebar h3 {
+                font-size: 0.9em;
+                margin-bottom: 10px;
+            }
+            
+            .admin-menu-item {
+                font-size: 0.85em;
+                padding: 10px 12px;
+                margin: 6px 0;
+            }
+            
+            .admin-content {
+                padding: 15px;
+            }
+            
+            .admin-content h2 {
+                font-size: 1.2em;
+            }
+            
+            #scores-table,
+            #admin-questions-table {
+                font-size: 0.8em;
+            }
+            
+            #scores-table th, #scores-table td,
+            #admin-questions-table th, #admin-questions-table td {
+                padding: 8px;
+            }
+            
+            .form-group input,
+            .form-group select {
+                font-size: 0.9em;
+                padding: 8px;
+            }
+            
+            .file-list-container {
+                margin: 15px 0;
+            }
+            
+            .file-list-container li {
+                font-size: 0.85em;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body class="login-page">
+
+    <header class="header">
+        <img src="/static/college_logo.png" alt="JNTUA Logo">
+        <div class="header-center">
+            <div class="college-details">
+                <h1>JNTUA COLLEGE OF ENGINEERING</h1>
+                <h2>Department of CSE</h2>
+                <p>KALIKIRI,517234</p>
+                <p>Coding Challenge Event</p>
+                <p>KALIKIRI, ANDHRA PRADESH - 517234</p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <img src="/static/club_logo.jpg" alt="Club Logo">
+            <button id="home-btn" class="home-btn" onclick="goHome()" style="display: none;">Home</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div id="login-section" class="round-section active">
+            <div class="container">
+                <h1 style="text-align:center;">Coding Challenge Platform</h1>
+                
+                <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px;">
+                    <button id="toggle-login-btn" class="nav-btn" onclick="toggleAuthForm('login')" style="flex: 0 1 auto;">Login</button>
+                    <button id="toggle-signup-btn" class="nav-btn" onclick="toggleAuthForm('signup')" style="flex: 0 1 auto; background-color: #6c757d;">Sign Up</button>
+                </div>
+
+                <!-- Login Form -->
+                <div id="login-form-container" class="login-form" style="display: block;">
+                    <h2>Team Login</h2>
+                    <input type="text" id="login-username" placeholder="Enter Team Username" required autocomplete="username">
+                    <br>
+                    <input type="password" id="login-password" placeholder="Enter Password" autocomplete="current-password">
+                    <br>
+                    <button id="student-login-btn" class="submit-btn">Login as Student</button>
+                    <button id="admin-login-btn" class="submit-btn">Login as Admin</button>
+                    <div id="login-message"></div>
+                </div>
+
+                <!-- Sign Up Form -->
+                <div id="signup-form-container" class="login-form" style="display: none;">
+                    <h2>Team Sign Up</h2>
+                    <input type="text" id="signup-username" placeholder="Create Team Username" required autocomplete="username">
+                    <br>
+                    <input type="password" id="signup-password" placeholder="Create Password" autocomplete="new-password">
+                    <br>
+                    <input type="password" id="signup-confirm-password" placeholder="Confirm Password" autocomplete="new-password">
+                    <br>
+                    <button id="student-signup-btn" class="submit-btn" style="background-color: #28a745;">Sign Up as Team</button>
+                    <div id="signup-message"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-content" style="display: none;">
+            <div class="container">
+                <!-- Student Navigation Buttons -->
+                <div id="nav-buttons" style="display: none; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: center;">
+                    <button class="nav-btn active" onclick="showRound('round-mcq')">Round 1: MCQ</button>
+                    <button class="nav-btn" onclick="showRound('round-scramble')">Round 2: Scramble</button>
+                    <button class="nav-btn" onclick="showRound('round-debug')">Round 3: Debug</button>
+                    <button class="nav-btn" onclick="showRound('round-frontend')">Round 4: Frontend</button>
+                    <button class="nav-btn" onclick="showRound('round-score')">View My Scores</button>
+                </div>
+
+                <div id="admin-upload-section" class="round-section">
+                    <div class="admin-container">
+                        <div class="admin-sidebar">
+                            <h3>Admin Menu</h3>
+                            <button class="admin-menu-item active" onclick="showAdminPanel('upload-panel')">Upload Files</button>
+                            <button class="admin-menu-item" onclick="showAdminPanel('questions-panel')">View Questions</button>
+                            <button class="admin-menu-item" onclick="showAdminPanel('code-questions-panel')">View Code Files</button>
+                            <button class="admin-menu-item" onclick="showAdminPanel('scores-panel')">View Scores</button>
+                            <button class="admin-menu-item" onclick="showAdminPanel('submissions-panel')">View Student Submissions</button>
+                        </div>
+                        
+                        <div class="admin-content">
+                            <!-- Upload Panel -->
+                            <div id="upload-panel" class="admin-panel-content">
+                                <h2>File Upload Management</h2>
+                                <p style="color: #666; margin-bottom: 20px;">Upload challenge files for different rounds of the coding competition.</p>
+                                
+                                <div class="admin-section">
+                                    <div class="form-group">
+                                        <label for="round-select">Select Round:</label>
+                                        <select id="round-select">
+                                            <option value="mcq">Round 1 (MCQ)</option>
+                                            <option value="scramble">Round 2 (Code Scramble)</option>
+                                            <option value="debug">Round 3 (Code Debugging)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="admin-lang-select">Select Language (for Scramble/Debug):</label>
+                                        <select id="admin-lang-select">
+                                            <option value="py">Python</option>
+                                            <option value="c">C</option>
+                                            <option value="cpp">C++</option>
+                                            <option value="java">Java</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="admin-file-upload">Select File:</label>
+                                        <input type="file" id="admin-file-upload">
+                                    </div>
+                                    
+                                    <div id="admin-message" class="result-message"></div>
+                                    
+                                    <div class="button-group">
+                                        <button class="btn-primary" onclick="uploadAdminFile()">Upload File</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Questions Panel -->
+                            <div id="questions-panel" class="admin-panel-content" style="display: none;">
+                                <h2>MCQ Questions</h2>
+                                <p style="color: #666; margin-bottom: 20px;">View all uploaded MCQ questions.</p>
+                                <table id="admin-questions-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Question</th>
+                                            <th>Option A</th>
+                                            <th>Option B</th>
+                                            <th>Option C</th>
+                                            <th>Option D</th>
+                                            <th>Answer</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Code Questions Panel -->
+                            <div id="code-questions-panel" class="admin-panel-content" style="display: none;">
+                                <h2>Code Files Management</h2>
+                                <p style="color: #666; margin-bottom: 20px;">View all uploaded code files for scramble and debugging rounds.</p>
+                                
+                                <div class="form-group">
+                                    <label for="admin-code-lang-select">Select Language:</label>
+                                    <select id="admin-code-lang-select" onchange="renderAdminCodeFiles()">
+                                        <option value="py">Python</option>
+                                        <option value="c">C</option>
+                                        <option value="cpp">C++</option>
+                                        <option value="java">Java</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="admin-section">
+                                    <div class="admin-section-title">Round 2 - Code Scramble Files</div>
+                                    <div id="scramble-files" class="file-list-container">
+                                        <ul id="scramble-file-list"></ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="admin-section">
+                                    <div class="admin-section-title">Round 3 - Code Debugging Files</div>
+                                    <div id="debug-files" class="file-list-container">
+                                        <ul id="debug-file-list"></ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="admin-section" style="margin-top: 20px;">
+                                    <div class="admin-section-title">File Preview</div>
+                                    <pre id="file-content-display" style="display: none; background-color: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 0.85em; max-height: 400px;"></pre>
+                                </div>
+                            </div>
+                            
+                            <!-- Scores Panel -->
+                            <div id="scores-panel" class="admin-panel-content" style="display: none;">
+                                <h2>Student Scores Dashboard</h2>
+                                <p style="color: #666; margin-bottom: 20px;">View all student scores across different rounds.</p>
+                                
+                                <div class="form-group">
+                                    <label for="round-filter">Filter by Round:</label>
+                                    <select id="round-filter" onchange="filterScores()">
+                                        <option value="all">All Rounds</option>
+                                        <option value="MCQ">Round 1 (MCQ)</option>
+                                        <option value="Scramble">Round 2 (Scramble)</option>
+                                        <option value="Debugging">Round 3 (Debugging)</option>
+                                    </select>
+                                </div>
+                                
+                                <table id="scores-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Team Name</th>
+                                            <th>Round</th>
+                                            <th>Correct Answers</th>
+                                            <th>Total Questions</th>
+                                            <th>Percentage</th>
+                                            <th>Timestamp</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                
+                                <div class="button-group" style="margin-top: 20px;">
+                                    <button onclick="fetchAndRenderScores()" style="background: var(--secondary-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-right: 10px;">Refresh Scores</button>
+                                    <button class="btn-danger" onclick="deleteAllScores()">Delete All Scores</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Student Submissions Panel -->
+                            <div id="submissions-panel" class="admin-panel-content" style="display: none;">
+                                <h2>Student Submissions</h2>
+                                <p style="color: #666; margin-bottom: 20px;">View all files submitted by students across different rounds.</p>
+                                
+                                <div class="form-group">
+                                    <label for="submission-round-filter">Filter by Round:</label>
+                                    <select id="submission-round-filter" onchange="filterSubmissions()">
+                                        <option value="all">All Rounds</option>
+                                        <option value="Code Scramble">Round 2 (Code Scramble)</option>
+                                        <option value="Code Debugging">Round 3 (Code Debugging)</option>
+                                        <option value="Frontend Challenge">Round 4 (Frontend Challenge)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="submission-team-filter">Filter by Team:</label>
+                                    <select id="submission-team-filter" onchange="filterSubmissions()">
+                                        <option value="all">All Teams</option>
+                                    </select>
+                                </div>
+                                
+                                <table id="submissions-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Team Name</th>
+                                            <th>Round</th>
+                                            <th>Filename</th>
+                                            <th>Language</th>
+                                            <th>Timestamp</th>
+                                            <th>Size (bytes)</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                                
+                                <div class="button-group" style="margin-top: 20px;">
+                                    <button onclick="fetchAndRenderSubmissions()" style="background: var(--secondary-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Refresh Submissions</button>
+                                </div>
+                                
+                                <div id="submission-content-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 1000; max-width: 80%; max-height: 80%; overflow: auto;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                        <h3 id="submission-content-title" style="margin: 0;">File Content</h3>
+                                        <button onclick="closeSubmissionModal()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Close</button>
+                                    </div>
+                                    <pre id="submission-content-display" style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 0.85em; max-height: 500px; white-space: pre-wrap; word-wrap: break-word;"></pre>
+                                </div>
+                                <div id="submission-modal-backdrop" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;" onclick="closeSubmissionModal()"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="round-mcq" class="round-section">
+                    <div class="mcq-timer">Time Left: 10:00</div>
+                    <h2>Round 1: Multiple Choice Questions</h2>
+                    <div id="quiz-container"></div>
+                    <button id="next-question-btn" class="submit-btn" style="display: none;">Next Question</button>
+                    <button id="mcq-submit-btn" class="submit-btn" style="display: none;">Submit Quiz</button>
+                    <div id="mcq-results" class="result-message"></div>
+                </div>
+
+                <div id="round-scramble" class="round-section">
+                    <h2>Round 2: Code Scramble</h2>
+                    <div class="code-challenge-controls">
+                        <label for="scramble-lang-select">Select Language:</label>
+                        <select id="scramble-lang-select">
+                            <option value="py">Python</option>
+                            <option value="c">C</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                        </select>
+                        <button id="scramble-start-btn" onclick="startScrambleRound()">Start/Reset</button>
+                    </div>
+                    <p>Rearrange the code to fix the program.</p>
+                    <div id="scramble-editor"></div>
+                    <div class="code-submission-controls">
+                        <button id="scramble-submit-btn" class="submit-btn">Submit Code</button>
+                        <button id="scramble-next-btn" class="submit-btn" style="display: none;">Next Code</button>
+                        <button id="scramble-finish-btn" class="submit-btn" style="display: none;">Finish Round</button>
+                    </div>
+                    <div id="scramble-result-message" class="result-message"></div>
+                </div>
+                
+                <div id="round-debug" class="round-section">
+                    <h2>Round 3: Code Debugging</h2>
+                    <div class="code-challenge-controls">
+                        <label for="debug-lang-select">Select Language:</label>
+                        <select id="debug-lang-select">
+                            <option value="py">Python</option>
+                            <option value="c">C</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                        </select>
+                        <button id="debug-start-btn" onclick="startDebugRound()">Start/Reset</button>
+                    </div>
+                    <p>Find and fix the bug(s) in the following code.</p>
+                    <div id="debug-editor"></div>
+                    <div class="code-submission-controls">
+                        <button id="debug-submit-btn" class="submit-btn">Submit Code</button>
+                        <button id="debug-next-btn" class="submit-btn" style="display: none;">Next Code</button>
+                        <button id="debug-finish-btn" class="submit-btn" style="display: none;">Finish Round</button>
+                    </div>
+                    <div id="debug-result-message" class="result-message"></div>
+                </div>
+
+                <div id="round-frontend" class="round-section">
+                    <h2>Round 4: Frontend Code Submission</h2>
+                    <p>Please upload your frontend code and design files for manual review.</p>
+                    <form id="uploadForm" class="file-upload-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="codeFile">Select your `.txt` file (Code):</label>
+                            <input type="file" id="codeFile" name="file" accept=".txt" required>
+                            <small style="color: #666;">Upload your HTML/CSS/JS code as a text file</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="imageFile">Select design screenshots (Optional):</label>
+                            <input type="file" id="imageFile" name="image" accept=".png,.jpg,.jpeg">
+                            <small style="color: #666;">Upload PNG or JPG screenshots of your design</small>
+                        </div>
+                        
+                        <button id="frontend-submit-btn" class="submit-btn" type="submit">Upload Files</button>
+                    </form>
+                    <div id="frontend-message" class="result-message"></div>
+                </div>
+
+                <div id="round-score" class="round-section">
+                    <h2>My Scores</h2>
+                    <p style="color: #666; margin-bottom: 20px;">View your performance across all rounds.</p>
+                    
+                    <div id="student-scores-container">
+                        <table id="student-scores-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                            <thead>
+                                <tr style="background-color: var(--primary-color); color: white;">
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Round</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Correct Answers</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Total Questions</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Percentage</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-scores-tbody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 20px; border: 1px solid #ddd;">Loading scores...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button onclick="loadStudentScores()" class="submit-btn" style="background: var(--secondary-color);">Refresh Scores</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global variables for CodeMirror instances and user state
+        let scrambleEditor, debugEditor;
+        let loggedInUser = null;
+        let allScores = [];
+        let allQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let timeLeft = 600;
+        let timerInterval;
+        let allScrambleFiles = [];
+        let allDebugFiles = [];
+        let adminCodeLangSelect = document.getElementById('admin-code-lang-select');
+
+        // Admin panel navigation
+        const showAdminPanel = (panelId) => {
+            // Fade out current panel
+            const panels = document.querySelectorAll('.admin-panel-content');
+            panels.forEach(panel => {
+                if (panel.style.display !== 'none') {
+                    panel.style.opacity = '0';
+                    panel.style.transition = 'opacity 0.2s ease-out';
+                }
+            });
+            
+            setTimeout(() => {
+                // Hide all admin panels
+                panels.forEach(panel => {
+                    panel.style.display = 'none';
+                    panel.style.opacity = '1';
+                });
+                
+                // Remove active class from all menu items
+                document.querySelectorAll('.admin-menu-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Show selected panel
+                const panel = document.getElementById(panelId);
+                if (panel) {
+                    panel.style.display = 'block';
+                }
+                
+                // Add active class to clicked button
+                event.target.classList.add('active');
+                
+                // Load data based on panel
+                if (panelId === 'questions-panel') {
+                    showAdminQuestions();
+                } else if (panelId === 'code-questions-panel') {
+                    renderAdminCodeFiles();
+                } else if (panelId === 'scores-panel') {
+                    fetchAndRenderScores();
+                } else if (panelId === 'submissions-panel') {
+                    fetchAndRenderSubmissions();
+                }
+            }, 150);
+        };
+
+        // Home button - return to login
+        const goHome = () => {
+            const mainContent = document.getElementById('main-content');
+            const loginSection = document.getElementById('login-section');
+            
+            mainContent.style.transition = 'opacity 0.3s ease-out';
+            mainContent.style.opacity = '0';
+            
+            setTimeout(() => {
+                document.body.classList.add('login-page');
+                document.body.classList.remove('main-page');
+                mainContent.style.display = 'none';
+                loginSection.style.display = 'block';
+                loginSection.style.opacity = '0';
+                document.getElementById('home-btn').style.display = 'none';
+                
+                document.getElementById('login-username').value = '';
+                document.getElementById('login-password').value = '';
+                document.getElementById('signup-username').value = '';
+                document.getElementById('signup-password').value = '';
+                document.getElementById('signup-confirm-password').value = '';
+                document.getElementById('login-message').textContent = '';
+                document.getElementById('signup-message').textContent = '';
+                toggleAuthForm('login');
+                
+                setTimeout(() => {
+                    loginSection.style.transition = 'opacity 0.3s ease-in';
+                    loginSection.style.opacity = '1';
+                }, 50);
+            }, 300);
+            
+            loggedInUser = null;
+        };
+        
+        // Toggle between login and signup forms
+        const toggleAuthForm = (formType) => {
+            const loginContainer = document.getElementById('login-form-container');
+            const signupContainer = document.getElementById('signup-form-container');
+            const toggleLoginBtn = document.getElementById('toggle-login-btn');
+            const toggleSignupBtn = document.getElementById('toggle-signup-btn');
+            
+            if (formType === 'login') {
+                loginContainer.style.display = 'block';
+                signupContainer.style.display = 'none';
+                toggleLoginBtn.style.backgroundColor = 'var(--primary-color)';
+                toggleLoginBtn.style.color = 'white';
+                toggleSignupBtn.style.backgroundColor = '#6c757d';
+                toggleSignupBtn.style.color = 'white';
+            } else {
+                loginContainer.style.display = 'none';
+                signupContainer.style.display = 'block';
+                toggleLoginBtn.style.backgroundColor = '#6c757d';
+                toggleLoginBtn.style.color = 'white';
+                toggleSignupBtn.style.backgroundColor = 'var(--primary-color)';
+                toggleSignupBtn.style.color = 'white';
+            }
+        };
+
+        // Navigation logic
+        const showRound = (roundId) => {
+            // Add fade out effect
+            const sections = document.querySelectorAll('.round-section');
+            sections.forEach(section => {
+                if (section.classList.contains('active')) {
+                    section.style.opacity = '0';
+                    section.style.transition = 'opacity 0.2s ease-out';
+                }
+            });
+            
+            setTimeout(() => {
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                    section.style.opacity = '1';
+                });
+                
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                const section = document.getElementById(roundId);
+                if (section) {
+                    section.classList.add('active');
+                }
+                
+                const activeNavButton = document.querySelector(`[onclick="showRound('${roundId}')"]`);
+                if (activeNavButton) {
+                     activeNavButton.classList.add('active');
+                }
+                
+                // Load student scores when viewing scores page
+                if (roundId === 'round-score') {
+                    loadStudentScores();
+                }
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100);
+        };
+
+        // --- Login Logic ---
+        const login = async (role) => {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const loginMessage = document.getElementById('login-message');
+            loginMessage.textContent = '';
+            
+            if (!username) {
+                loginMessage.textContent = 'Please enter a username';
+                loginMessage.style.color = '#dc3545';
+                return;
+            }
+            
+            let url = role === 'admin' ? '/admin_login' : '/student_login';
+            let body = { username: username, password: password };
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    loggedInUser = username;
+                    localStorage.setItem('loggedInUser', username);
+                    localStorage.setItem('userRole', role);
+                    
+                    // Smooth transition from login to main
+                    const loginSection = document.getElementById('login-section');
+                    const mainContent = document.getElementById('main-content');
+                    
+                    loginSection.style.transition = 'opacity 0.3s ease-out';
+                    loginSection.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        document.body.classList.remove('login-page');
+                        document.body.classList.add('main-page');
+                        loginSection.style.display = 'none';
+                        mainContent.style.display = 'flex';
+                        mainContent.style.opacity = '0';
+                        document.getElementById('home-btn').style.display = 'block';
+                        
+                        setTimeout(() => {
+                            mainContent.style.transition = 'opacity 0.3s ease-in';
+                            mainContent.style.opacity = '1';
+                        }, 50);
+
+                        if (role === 'admin') {
+                            showRound('admin-upload-section');
+                            showAdminPanel('upload-panel');
+                        } else {
+                            document.getElementById('nav-buttons').style.display = 'flex';
+                            showRound('round-mcq');
+                            fetchQuestions();
+                        }
+                    }, 300);
+                } else {
+                    loginMessage.textContent = data.message || 'Login failed. Please check your credentials.';
+                    loginMessage.style.color = '#dc3545';
+                }
+            } catch (error) {
+                loginMessage.textContent = 'Network error. Could not connect to server.';
+                loginMessage.style.color = '#dc3545';
+            }
+        };
+        
+        // --- Sign Up Logic ---
+        const signup = async (role) => {
+            const username = document.getElementById('signup-username').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            const signupMessage = document.getElementById('signup-message');
+            signupMessage.textContent = '';
+            
+            if (!username || !password || !confirmPassword) {
+                signupMessage.textContent = 'Please fill in all fields';
+                signupMessage.style.color = '#dc3545';
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                signupMessage.textContent = 'Passwords do not match';
+                signupMessage.style.color = '#dc3545';
+                return;
+            }
+            
+            if (password.length < 4) {
+                signupMessage.textContent = 'Password must be at least 4 characters long';
+                signupMessage.style.color = '#dc3545';
+                return;
+            }
+            
+            let url = role === 'admin' ? '/admin_signup' : '/student_signup';
+            let body = { username: username, password: password };
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    signupMessage.textContent = 'Sign up successful! Redirecting to login...';
+                    signupMessage.style.color = '#28a745';
+                    setTimeout(() => {
+                        toggleAuthForm('login');
+                        document.getElementById('login-username').value = username;
+                        document.getElementById('login-password').value = '';
+                    }, 1000);
+                } else {
+                    signupMessage.textContent = data.message || 'Sign up failed. Username might already exist.';
+                    signupMessage.style.color = '#dc3545';
+                }
+            } catch (error) {
+                signupMessage.textContent = 'Network error. Could not connect to server.';
+                signupMessage.style.color = '#dc3545';
+            }
+        };
+
+        // --- Admin Upload Logic ---
+        const uploadAdminFile = async () => {
+            const roundSelect = document.getElementById('round-select').value;
+            const langSelect = document.getElementById('admin-lang-select').value;
+            const fileInput = document.getElementById('admin-file-upload');
+            const messageContainer = document.getElementById('admin-message');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showMessage('admin-message', 'Please select a file to upload.', '#f8d7da', '#f5c6cb');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('round', roundSelect);
+            formData.append('file', file);
+            formData.append('lang', langSelect);
+
+            try {
+                const response = await fetch('/admin_upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage('admin-message', data.message, '#d4edda', '#c3e6cb');
+                } else {
+                    showMessage('admin-message', `Upload failed: ${data.message}`, '#f8d7da', '#f5c6cb');
+                }
+            } catch (error) {
+                console.error('Error during file upload:', error);
+                showMessage('admin-message', 'An error occurred. Please try again.', '#f8d7da', '#f5c6cb');
+            }
+        };
+        
+        // --- Admin Dashboard Logic ---
+        const showAdminDashboard = async () => {
+            showAdminPanel('scores-panel');
+            await fetchAndRenderScores();
+        };
+
+        const fetchAndRenderScores = async () => {
+            const tbody = document.getElementById('scores-table').querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            try {
+                const response = await fetch('/admin/scores');
+                if (!response.ok) throw new Error('Failed to fetch scores');
+                const responseText = await response.text();
+                allScores = JSON.parse(responseText);
+                console.log('Scores loaded:', allScores);
+                renderScores(allScores);
+            } catch (error) {
+                console.error('Error fetching scores:', error);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Failed to load scores.</td></tr>';
+            }
+        };
+
+        const renderScores = (scoresToRender) => {
+            const tbody = document.getElementById('scores-table').querySelector('tbody');
+            tbody.innerHTML = '';
+            if (scoresToRender.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No scores found.</td></tr>';
+                return;
+            }
+            scoresToRender.forEach(score => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${score.username}</td>
+                    <td>${score.round_name}</td>
+                    <td>${score.correct_answers}</td>
+                    <td>${score.total_questions}</td>
+                    <td>${score.percentage.toFixed(2)}%</td>
+                    <td>${score.timestamp}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        };
+        
+        const filterScores = () => {
+            const filterValue = document.getElementById('round-filter').value;
+            let filtered = allScores;
+            if (filterValue !== 'all') {
+                filtered = allScores.filter(score => score.round_name === filterValue);
+            }
+            renderScores(filtered);
+        };
+
+        const deleteAllScores = async () => {
+            if (confirm("Are you sure you want to delete all scores? This action cannot be undone.")) {
+                try {
+                    const response = await fetch('/admin/scores/delete', { method: 'DELETE' });
+                    const data = await response.json();
+                    if (response.ok) {
+                        alert(data.message);
+                        fetchAndRenderScores();
+                    } else {
+                        alert('Error deleting scores: ' + data.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('A network error occurred while trying to delete scores.');
+                }
+            }
+        };
+
+        // --- Admin Questions Logic ---
+        const showAdminQuestions = async () => {
+            const tbody = document.getElementById('admin-questions-table').querySelector('tbody');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading questions...</td></tr>';
+            
+            try {
+                const response = await fetch('/admin/questions');
+                if (!response.ok) throw new Error('Failed to fetch questions');
+                const questions = await response.json();
+                
+                if (questions.error) {
+                     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">${questions.error}</td></tr>`;
+                     return;
+                }
+                if (questions.length === 0) {
+                     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No questions found. Please upload a questions.xlsx file.</td></tr>';
+                     return;
+                }
+                questions.forEach(q => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${q.id}</td>
+                        <td>${q.question_text}</td>
+                        <td>${q.optionA}</td>
+                        <td>${q.optionB}</td>
+                        <td>${q.optionC}</td>
+                        <td>${q.optionD}</td>
+                        <td>${q.correct_answer}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching questions:', error);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Failed to load questions.</td></tr>';
+            }
+        };
+
+        // --- Admin Code Questions Logic ---
+        const showAdminCodeQuestions = async () => {
+            showAdminPanel('code-questions-panel');
+            renderAdminCodeFiles();
+        };
+
+        const renderAdminCodeFiles = async () => {
+            const lang = adminCodeLangSelect.value;
+            const scrambleList = document.getElementById('scramble-file-list');
+            const debugList = document.getElementById('debug-file-list');
+            scrambleList.innerHTML = '';
+            debugList.innerHTML = '';
+            document.getElementById('file-content-display').style.display = 'none';
+
+            try {
+                const scrambleResponse = await fetch(`/admin/code_questions?round=scramble&lang=${lang}`);
+                if (scrambleResponse.ok) {
+                    const scrambleFiles = await scrambleResponse.json();
+                    if (scrambleFiles.length > 0) {
+                        allScrambleFiles = scrambleFiles;
+                        scrambleFiles.forEach(file => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<a onclick="viewFileContent('scramble/${lang}/${file}')">${file}</a>`;
+                            scrambleList.appendChild(li);
+                        });
+                    } else {
+                        scrambleList.innerHTML = `<li>No scrambled code files found for ${lang}.</li>`;
+                    }
+                }
+
+                const debugResponse = await fetch(`/admin/code_questions?round=debug&lang=${lang}`);
+                if (debugResponse.ok) {
+                    const debugFiles = await debugResponse.json();
+                    if (debugFiles.length > 0) {
+                        allDebugFiles = debugFiles;
+                        debugFiles.forEach(file => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<a onclick="viewFileContent('debug/${lang}/${file}')">${file}</a>`;
+                            debugList.appendChild(li);
+                        });
+                    } else {
+                        debugList.innerHTML = `<li>No buggy code files found for ${lang}.</li>`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching admin code files:', error);
+                scrambleList.innerHTML = `<li>Failed to load files.</li>`;
+                debugList.innerHTML = `<li>Failed to load files.</li>`;
+            }
+        };
+
+        const viewFileContent = async (filePath) => {
+            const display = document.getElementById('file-content-display');
+            display.style.display = 'block';
+            display.textContent = 'Loading file content...';
+            
+            try {
+                const response = await fetch(`/admin/code_content?filename=${filePath}`);
+                if (!response.ok) throw new Error('Failed to fetch file content');
+                const content = await response.text();
+                display.textContent = content;
+            } catch (error) {
+                console.error('Error viewing file content:', error);
+                display.textContent = `Error: Could not load file content for ${filePath}.`;
+            }
+        };
+
+        // --- Student Submissions Logic ---
+        let allSubmissions = [];
+        
+        const fetchAndRenderSubmissions = async () => {
+            const tbody = document.getElementById('submissions-table').querySelector('tbody');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading submissions...</td></tr>';
+            
+            try {
+                const response = await fetch('/admin/submissions');
+                if (!response.ok) throw new Error('Failed to fetch submissions');
+                allSubmissions = await response.json();
+                console.log('Submissions loaded:', allSubmissions);
+                
+                // Populate team filter dropdown
+                const teamFilter = document.getElementById('submission-team-filter');
+                const uniqueTeams = [...new Set(allSubmissions.map(s => s.team_name))].sort();
+                teamFilter.innerHTML = '<option value="all">All Teams</option>';
+                uniqueTeams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team;
+                    option.textContent = team;
+                    teamFilter.appendChild(option);
+                });
+                
+                renderSubmissions(allSubmissions);
+            } catch (error) {
+                console.error('Error fetching submissions:', error);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Failed to load submissions.</td></tr>';
+            }
+        };
+
+        const renderSubmissions = (submissionsToRender) => {
+            const tbody = document.getElementById('submissions-table').querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            if (submissionsToRender.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No submissions found.</td></tr>';
+                return;
+            }
+            
+            submissionsToRender.forEach(submission => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${submission.team_name}</td>
+                    <td>${submission.round_name}</td>
+                    <td>${submission.filename}</td>
+                    <td>${submission.language}</td>
+                    <td>${submission.timestamp}</td>
+                    <td>${submission.size}</td>
+                    <td><button onclick="viewSubmissionContent('${submission.file_path.replace(/\\/g, '/')}')" style="background: var(--primary-color); color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">View</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        };
+        
+        const filterSubmissions = () => {
+            const roundFilter = document.getElementById('submission-round-filter').value;
+            const teamFilter = document.getElementById('submission-team-filter').value;
+            
+            let filtered = allSubmissions;
+            
+            if (roundFilter !== 'all') {
+                filtered = filtered.filter(s => s.round_name === roundFilter);
+            }
+            
+            if (teamFilter !== 'all') {
+                filtered = filtered.filter(s => s.team_name === teamFilter);
+            }
+            
+            renderSubmissions(filtered);
+        };
+        
+        const viewSubmissionContent = async (filePath) => {
+            const modal = document.getElementById('submission-content-modal');
+            const backdrop = document.getElementById('submission-modal-backdrop');
+            const display = document.getElementById('submission-content-display');
+            const title = document.getElementById('submission-content-title');
+            
+            modal.style.display = 'block';
+            backdrop.style.display = 'block';
+            display.textContent = 'Loading file content...';
+            title.textContent = `File: ${filePath.split('/').pop()}`;
+            
+            try {
+                const response = await fetch(`/admin/submission_content?file_path=${encodeURIComponent(filePath)}`);
+                if (!response.ok) throw new Error('Failed to fetch file content');
+                
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('image')) {
+                    display.innerHTML = `<img src="/admin/submission_content?file_path=${encodeURIComponent(filePath)}" style="max-width: 100%; height: auto;" />`;
+                } else {
+                    const data = await response.json();
+                    display.textContent = data.content || 'No content available';
+                }
+            } catch (error) {
+                console.error('Error viewing submission content:', error);
+                display.textContent = `Error: Could not load file content.`;
+            }
+        };
+        
+        const closeSubmissionModal = () => {
+            document.getElementById('submission-content-modal').style.display = 'none';
+            document.getElementById('submission-modal-backdrop').style.display = 'none';
+        };
+
+        // --- Student Scores Viewing ---
+        const loadStudentScores = async () => {
+            const tbody = document.getElementById('student-scores-tbody');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; border: 1px solid #ddd;">Loading scores...</td></tr>';
+            
+            if (!loggedInUser) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; border: 1px solid #ddd; color: #dc3545;">Please log in to view scores.</td></tr>';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/student/scores?username=${encodeURIComponent(loggedInUser)}`);
+                if (!response.ok) throw new Error('Failed to fetch scores');
+                
+                const scores = await response.json();
+                
+                if (scores.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; border: 1px solid #ddd;">No scores available yet. Complete some rounds to see your scores!</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                scores.forEach(score => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="padding: 12px; border: 1px solid #ddd;">${score.round_name}</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">${score.correct_answers}</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">${score.total_questions}</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">${score.percentage.toFixed(2)}%</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">${score.timestamp}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading student scores:', error);
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; border: 1px solid #ddd; color: #dc3545;">Failed to load scores. Please try again.</td></tr>';
+            }
+        };
+
+        // --- Round 1: MCQ Logic ---
+        const quizContainer = document.getElementById('quiz-container');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+        const mcqSubmitButton = document.getElementById('mcq-submit-btn');
+        const mcqResultsContainer = document.getElementById('mcq-results');
+        const timerDisplay = document.querySelector('.mcq-timer');
+        
+
+        const startTimer = () => {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `Time Left: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time's up! Your answers have been submitted automatically.");
+                    submitMCQ();
+                }
+            }, 1000);
+        };
+
+        const fetchQuestions = async () => {
+            try {
+                const response = await fetch('/get_mcq_questions');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const questions = await response.json();
+                
+                if (questions.error) {
+                     quizContainer.innerHTML = `<p>${questions.error}</p>`;
+                     return;
+                }
+                
+                allQuestions = questions;
+                allQuestions.sort(() => Math.random() - 0.5);
+                currentQuestionIndex = 0; 
+                userAnswers = {};
+                displayCurrentQuestion();
+                startTimer();
+                nextQuestionBtn.style.display = 'block';
+                mcqSubmitButton.style.display = 'none';
+                mcqResultsContainer.style.display = 'none';
+            } catch (error) {
+                console.error('Error fetching questions:', error);
+                quizContainer.innerHTML = '<p>Could not load questions. Please try again later. Admin needs to upload the questions.xlsx file.</p>';
+            }
+        };
+        
+        const displayCurrentQuestion = () => {
+            quizContainer.innerHTML = '';
+            if (currentQuestionIndex < allQuestions.length) {
+                const question = allQuestions[currentQuestionIndex];
+                const questionBlock = document.createElement('div');
+                questionBlock.classList.add('question-block');
+                questionBlock.innerHTML = `<h3>${currentQuestionIndex + 1}. ${question.question_text}</h3>`;
+                const optionsList = document.createElement('ul');
+                optionsList.classList.add('options-list');
+                const options = [question.optionA, question.optionB, question.optionC, question.optionD];
+                options.sort(() => Math.random() - 0.5);
+                options.forEach(option => {
+                    optionsList.innerHTML += `<li><input type="radio" name="q${question.id}" value="${option}"> <label>${option}</label></li>`;
+                });
+                questionBlock.appendChild(optionsList);
+                quizContainer.appendChild(questionBlock);
+            } else {
+                nextQuestionBtn.style.display = 'none';
+                mcqSubmitButton.style.display = 'block';
+            }
+        };
+
+        const nextQuestion = () => {
+            const currentQuestion = allQuestions[currentQuestionIndex];
+            const selectedOption = document.querySelector(`input[name="q${currentQuestion.id}"]:checked`);
+            if (selectedOption) {
+                userAnswers[currentQuestion.id] = selectedOption.value;
+                currentQuestionIndex++;
+                displayCurrentQuestion();
+            } else {
+                alert("Please select an answer before proceeding.");
+            }
+        };
+
+        const submitMCQ = async () => {
+            let correctAnswers = 0;
+            const totalQuestions = allQuestions.length;
+            allQuestions.forEach(question => {
+                if (userAnswers[question.id] === question.correct_answer) {
+                    correctAnswers++;
+                }
+            });
+
+            const scorePercentage = (correctAnswers / totalQuestions) * 100;
+
+            mcqResultsContainer.style.display = 'block';
+            mcqResultsContainer.innerHTML = `<h2>Success!</h2><p>Your submission has been recorded successfully.</p><p style="font-size: 0.9em; color: #666;">Scores will be visible on the admin dashboard.</p>`;
+            mcqResultsContainer.style.backgroundColor = '#d4edda';
+            mcqResultsContainer.style.color = '#155724';
+            mcqSubmitButton.disabled = true;
+
+            try {
+                await fetch('/submit_mcq_score', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username: loggedInUser, 
+                        correct_answers: correctAnswers,
+                        percentage: scorePercentage,
+                        total_questions: totalQuestions 
+                    })
+                });
+            } catch (error) {
+                console.error('Error saving score:', error);
+            }
+        };
+
+        nextQuestionBtn.addEventListener('click', nextQuestion);
+        mcqSubmitButton.addEventListener('click', submitMCQ);
+
+        // --- Round 2: Code Scramble Logic ---
+        const scrambleEditorElement = document.getElementById('scramble-editor');
+        const scrambleSubmitBtn = document.getElementById('scramble-submit-btn');
+        const scrambleNextBtn = document.getElementById('scramble-next-btn');
+        const scrambleFinishBtn = document.getElementById('scramble-finish-btn');
+        const scrambleResultMsg = document.getElementById('scramble-result-message');
+        const scrambleLangSelect = document.getElementById('scramble-lang-select');
+        
+        let currentScrambleFileIndex = 0;
+        
+        const startScrambleRound = async () => {
+            const selectedLang = scrambleLangSelect.value;
+            try {
+                const response = await fetch(`/get_scrambled_code_list?lang=${selectedLang}`);
+                if (!response.ok) throw new Error('Failed to fetch scrambled code list');
+                const scrambleFiles = await response.json();
+                
+                if (scrambleFiles.length > 0) {
+                    allScrambleFiles = scrambleFiles;
+                    currentScrambleFileIndex = 0;
+                    displayScrambleCode();
+                } else {
+                    scrambleEditorElement.innerHTML = `<p>No scrambled code files found for ${selectedLang}. Admin needs to upload them.</p>`;
+                    scrambleSubmitBtn.style.display = 'none';
+                    scrambleNextBtn.style.display = 'none';
+                    scrambleFinishBtn.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                scrambleEditorElement.innerHTML = `<p>Could not load code list for ${selectedLang}.</p>`;
+            }
+        };
+
+        const displayScrambleCode = async () => {
+            if (currentScrambleFileIndex < allScrambleFiles.length) {
+                const file = allScrambleFiles[currentScrambleFileIndex];
+                try {
+                    const response = await fetch(`/get_scrambled_code?file=scramble/${scrambleLangSelect.value}/${file}`);
+                    if (!response.ok) throw new Error('Failed to fetch file content');
+                    const data = await response.json();
+                    if (scrambleEditor) {
+                        scrambleEditor.setValue(data.code);
+                    } else {
+                        scrambleEditor = CodeMirror(scrambleEditorElement, {
+                            value: data.code,
+                            mode: 'python',
+                            lineNumbers: true
+                        });
+                    }
+                    scrambleSubmitBtn.style.display = 'block';
+                    scrambleNextBtn.style.display = 'none';
+                    scrambleFinishBtn.style.display = 'none';
+                } catch (error) {
+                    console.error('Error loading code:', error);
+                    scrambleEditorElement.innerHTML = `<p>Could not load code for file: ${file}.</p>`;
+                }
+            } else {
+                scrambleEditorElement.innerHTML = `<p>All scrambled challenges for ${scrambleLangSelect.value} are completed!</p>`;
+                scrambleSubmitBtn.style.display = 'none';
+                scrambleNextBtn.style.display = 'none';
+                scrambleFinishBtn.style.display = 'block';
+                scrambleResultMsg.style.display = 'none';
+            }
+        };
+        
+        scrambleSubmitBtn.addEventListener('click', async () => {
+            const studentCode = scrambleEditor.getValue();
+            const selectedLang = scrambleLangSelect.value;
+            const filePath = allScrambleFiles[currentScrambleFileIndex];
+
+            scrambleSubmitBtn.disabled = true;
+            scrambleSubmitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch('/submit_scrambled_code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: studentCode, lang: selectedLang, username: loggedInUser, file_path: `scramble/${selectedLang}/${filePath}` })
+                });
+                const data = await response.json();
+                scrambleResultMsg.style.display = 'block';
+                scrambleResultMsg.innerHTML = `<b>Team:</b> ${data.team_name}<br>
+                    <b>Attempted:</b> ${data.attempted}<br>
+                    <b>Correct:</b> ${data.correct}<br>
+                    <b>Accuracy:</b> ${data.accuracy}`;
+                scrambleResultMsg.style.backgroundColor = '#d4edda';
+                scrambleResultMsg.style.borderColor = '#c3e6cb';
+                scrambleResultMsg.style.color = '#155724';
+                scrambleSubmitBtn.style.display = 'none';
+                if (currentScrambleFileIndex < allScrambleFiles.length - 1) {
+                    scrambleNextBtn.style.display = 'block';
+                } else {
+                    scrambleFinishBtn.style.display = 'block';
+                }
+            } finally {
+                scrambleSubmitBtn.disabled = false;
+                scrambleSubmitBtn.textContent = 'Submit Code';
+            }
+        });
+        
+        scrambleNextBtn.addEventListener('click', () => {
+            currentScrambleFileIndex++;
+            displayScrambleCode();
+            scrambleResultMsg.style.display = 'none';
+        });
+
+        // --- Round 3: Code Debugging Logic ---
+        const debugEditorElement = document.getElementById('debug-editor');
+        const debugSubmitBtn = document.getElementById('debug-submit-btn');
+        const debugNextBtn = document.getElementById('debug-next-btn');
+        const debugFinishBtn = document.getElementById('debug-finish-btn');
+        const debugResultMsg = document.getElementById('debug-result-message');
+        const debugLangSelect = document.getElementById('debug-lang-select');
+      
+        let currentDebugFileIndex = 0;
+        
+        const startDebugRound = async () => {
+            const selectedLang = debugLangSelect.value;
+            try {
+                const response = await fetch(`/get_buggy_code_list?lang=${selectedLang}`);
+                if (!response.ok) throw new Error('Failed to fetch debug code list');
+                const debugFiles = await response.json();
+                
+                if (debugFiles.length > 0) {
+                    allDebugFiles = debugFiles;
+                    currentDebugFileIndex = 0;
+                    displayDebugCode();
+                } else {
+                    debugEditorElement.innerHTML = `<p>No buggy code files found for ${selectedLang}. Admin needs to upload them.</p>`;
+                    debugSubmitBtn.style.display = 'none';
+                    debugNextBtn.style.display = 'none';
+                    debugFinishBtn.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                debugEditorElement.innerHTML = `<p>Could not load code list for ${selectedLang}.</p>`;
+            }
+        };
+
+        const displayDebugCode = async () => {
+            if (currentDebugFileIndex < allDebugFiles.length) {
+                const file = allDebugFiles[currentDebugFileIndex];
+                try {
+                    const response = await fetch(`/get_buggy_code?file=debug/${debugLangSelect.value}/${file}`);
+                    if (!response.ok) throw new Error('Failed to fetch file content');
+                    const data = await response.json();
+                    if (debugEditor) {
+                        debugEditor.setValue(data.code);
+                    } else {
+                        debugEditor = CodeMirror(debugEditorElement, {
+                            value: data.code,
+                            mode: 'python',
+                            lineNumbers: true
+                        });
+                    }
+                    debugSubmitBtn.style.display = 'block';
+                    debugNextBtn.style.display = 'none';
+                    debugFinishBtn.style.display = 'none';
+                } catch (error) {
+                    console.error('Error loading code:', error);
+                    debugEditorElement.innerHTML = `<p>Could not load code for file: ${file}.</p>`;
+                }
+            } else {
+                debugEditorElement.innerHTML = `<p>All debugging challenges for ${debugLangSelect.value} are completed!</p>`;
+                debugSubmitBtn.style.display = 'none';
+                debugNextBtn.style.display = 'none';
+                debugFinishBtn.style.display = 'block';
+                debugResultMsg.style.display = 'none';
+            }
+        };
+        
+        debugSubmitBtn.addEventListener('click', async () => {
+            const studentCode = debugEditor.getValue();
+            const selectedLang = debugLangSelect.value;
+            const filePath = allDebugFiles[currentDebugFileIndex];
+            debugSubmitBtn.disabled = true;
+            debugSubmitBtn.textContent = 'Running tests...';
+            try {
+                const response = await fetch('/submit_debug_code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: studentCode, lang: selectedLang, username: loggedInUser, file_path: `debug/${selectedLang}/${filePath}` })
+                });
+                const data = await response.json();
+                debugResultMsg.style.display = 'block';
+                debugResultMsg.innerHTML = `<b>Team:</b> ${data.team_name}<br>
+                    <b>Passed Test Cases:</b> ${data.passed_tests} / ${data.total_tests}<br>
+                    <b>Accuracy:</b> ${data.accuracy}<br>
+                    <b>Time Taken:</b> ${data.time_taken_min} min`;
+                debugResultMsg.style.backgroundColor = '#d4edda';
+                debugResultMsg.style.borderColor = '#c3e6cb';
+                debugResultMsg.style.color = '#155724';
+                debugSubmitBtn.style.display = 'none';
+                if (currentDebugFileIndex < allDebugFiles.length - 1) {
+                    debugNextBtn.style.display = 'block';
+                } else {
+                    debugFinishBtn.style.display = 'block';
+                }
+            } finally {
+                debugSubmitBtn.disabled = false;
+                debugSubmitBtn.textContent = 'Submit Code';
+            }
+        });
+        
+        debugNextBtn.addEventListener('click', () => {
+            currentDebugFileIndex++;
+            displayDebugCode();
+            debugResultMsg.style.display = 'none';
+        });
+
+        // --- Round 4: Frontend Submission Logic ---
+        const uploadForm = document.getElementById('uploadForm');
+        const frontendMessage = document.getElementById('frontend-message');
+
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const codeFile = document.getElementById('codeFile').files[0];
+            const imageFile = document.getElementById('imageFile').files[0];
+            
+            if (!codeFile) {
+                showMessage('frontend-message', 'Please select a code file to upload.', '#f8d7da', '#f5c6cb');
+                return;
+            }
+            
+            // Upload code file
+            const codeFormData = new FormData();
+            codeFormData.append('file', codeFile);
+            codeFormData.append('username', loggedInUser);
+            
+            try {
+                const codeResponse = await fetch('/submit_frontend', { 
+                    method: 'POST', 
+                    body: codeFormData 
+                });
+                
+                if (!codeResponse.ok) {
+                    const errorData = await codeResponse.json();
+                    showMessage('frontend-message', `Upload failed: ${errorData.message}`, '#f8d7da', '#f5c6cb');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error during code file upload:', error);
+                showMessage('frontend-message', 'An error occurred while uploading code file.', '#f8d7da', '#f5c6cb');
+                return;
+            }
+            
+            // Upload image file if selected
+            if (imageFile) {
+                const imageFormData = new FormData();
+                imageFormData.append('file', imageFile);
+                imageFormData.append('username', loggedInUser);
+                
+                try {
+                    const imageResponse = await fetch('/submit_frontend', { 
+                        method: 'POST', 
+                        body: imageFormData 
+                    });
+                    
+                    if (!imageResponse.ok) {
+                        const errorData = await imageResponse.json();
+                        showMessage('frontend-message', `Image upload warning: ${errorData.message}`, '#fff3cd', '#ffc107');
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error during image upload:', error);
+                    showMessage('frontend-message', 'Code uploaded but image upload failed.', '#fff3cd', '#ffc107');
+                    return;
+                }
+            }
+            
+            showMessage('frontend-message', 'All files uploaded successfully!', '#d4edda', '#c3e6cb');
+            uploadForm.reset();
+        });
+
+        const showMessage = (id, text, bgColor, borderColor) => {
+            const container = document.getElementById(id);
+            container.textContent = text;
+            container.style.display = 'block';
+            container.style.backgroundColor = bgColor;
+            container.style.borderColor = borderColor;
+        };
+
+        // Initialize editors and show login page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Login buttons
+            document.getElementById('student-login-btn').addEventListener('click', () => login('student'));
+            document.getElementById('admin-login-btn').addEventListener('click', () => login('admin'));
+            
+            // Sign up button
+            document.getElementById('student-signup-btn').addEventListener('click', () => signup('student'));
+        });
+    </script>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Platform</h3>
+                <p>JNTUA Coding Challenge Platform is designed to assess coding skills across multiple programming paradigms and languages.</p>
+                <p>Featuring 4 comprehensive rounds: MCQ, Code Scramble, Debugging, and Frontend Development.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <p><a href="#" onclick="goHome(); return false;">Home</a></p>
+                <p><a href="#" onclick="alert('Contact: coding@jntua.ac.in'); return false;">Contact Us</a></p>
+                <p><a href="#" onclick="alert('Privacy Policy'); return false;">Privacy Policy</a></p>
+                <p><a href="#" onclick="alert('Terms of Service'); return false;">Terms of Service</a></p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p><strong>Email:</strong> <a href="mailto:coding@jntua.ac.in">coding@jntua.ac.in</a></p>
+                <p><strong>Location:</strong> JNTUA College of Engineering, Kalikiri</p>
+                <p><strong>Phone:</strong></p>
+                <p>+91- 9398952829</p> 
+                <p>+91- 7569162287</p> 
+                <p><strong>Created By:</strong></p>
+                <p>K. Harsha Vardhan (23KA1A0537)</p>
+                <p>Syed Basha (23KA1A0539)</p>
+                <div class="social-links">
+                
+                    <a href="https://www.facebook.com/jntuacek?mibextid=ZbWKwL " target="_blank"  title="Facebook" >f</a>
+                    <a href="https://x.com/jntu_kalikiri_" target="_blank" title="Twitter">𝕏</a>
+                    <a href="https://www.linkedin.com/school/jntua-college-of-engineering-kalikiri/"target="_blank"  title="LinkedIn">in</a>
+                    <a href="https://www.instagram.com/jntu_kalikiri_official_page_?igsh=MTJpc3NubGlkZnE2MA=="target="_blank"  title="Instagram">I</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 JNTUA Coding Challenge Platform. All rights reserved.</p>
+            <p>Developed by Department of CSE, JNTUACEK || Version 1.0</p>
+        </div>
+    </footer>
+</body>
+</html>
